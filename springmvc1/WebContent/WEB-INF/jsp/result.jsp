@@ -9,6 +9,8 @@
   <body>
      <h1>文件成功上传：${fileUrl}</h1>
        <ul>
+    <li><a href="download/diagrams.pdf">Download File</a></li>
     <li><a href="download2">Download File</a></li>
+    <li><a href="download3">Download File</a></li>
   </body>
 </html>

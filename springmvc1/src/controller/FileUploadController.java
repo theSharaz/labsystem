@@ -26,11 +26,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;  
-import org.springframework.ui.ModelMap;  
-import org.springframework.web.bind.annotation.RequestMapping;  
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;  
 import org.springframework.web.multipart.MultipartFile;  
 @Controller  
@@ -44,7 +45,7 @@ public class FileUploadController {
         String path = request.getSession().getServletContext().getRealPath("upload");  
         String originalfileName = file.getOriginalFilename();  
         String SUFFIX =originalfileName.substring(originalfileName.lastIndexOf("."));
-        String newfileName = originalfileName+SUFFIX;  
+        String newfileName = originalfileName;  
         
         File uploadedFile = new File(path, newfileName);  
         if(!uploadedFile.exists()){  
@@ -62,14 +63,11 @@ public class FileUploadController {
     }  
 	
 
-	
-	@RequestMapping("/download2")
-	   public void downloadFile2(HttpServletResponse response, HttpServletRequest request) throws IOException {
-	        String path = request.getSession().getServletContext().getRealPath("upload");  
-	        String Name = "1544073813551.pdf";
-		      File file = new File(path, Name);
-
-
+	@RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
+	   public void downloadFile1(HttpServletResponse response, HttpServletRequest request, @PathVariable String id) throws IOException {
+	      String path = request.getSession().getServletContext().getRealPath("upload");  
+	      String Name = id+".pdf";
+		  File file = new File(path, Name);
 	      response.setContentType("application/pdf");
 	      response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
 	      BufferedInputStream inStrem = new BufferedInputStream(new FileInputStream(file));
