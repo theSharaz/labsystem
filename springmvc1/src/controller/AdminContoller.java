@@ -5,6 +5,8 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;  
 import org.springframework.ui.ModelMap;  
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +44,13 @@ public class AdminContoller {
 	return "redirect:welcome";
   }
   
-//  http://localhost:8085/springmvc/customer/query
-//  http://localhost:8085/springmvc/addcus.jsp
+
+  @RequestMapping(value="/addClass",method = RequestMethod.POST)
+  public String addClass(Class cl) { 
+	  clDao.addClass(cl);
+	return "redirect:welcome";
+  }
+
 	  @RequestMapping(value="/addStu",method = RequestMethod.POST)
 	  public String addProf(Student stu) { 
 		  stuDao.addStudent(stu);
@@ -87,6 +94,14 @@ public class AdminContoller {
     	stuDao.deleteStudentById(id);
     	return "redirect:../welcome"; 
     }
+    
+	  @RequestMapping(value="/lelele",method = RequestMethod.GET)
+	  public ResponseEntity lelele(HttpServletRequest req) { 
+		  String pulp = "THE DAMN FUNCTION IS WORKING T";
+	  		req.getSession().setAttribute("pulp", pulp);
+	  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+
+} 
     
     
 }

@@ -14,7 +14,7 @@ import entity.Class;
 	    
 	  public List<Class> allClass(){
 		List<Class> cllist=new ArrayList<Class>();
-		String sql="select * from class";
+		String sql="select * from class order by classno";
 		cllist = jdbcTemplate.query(sql, new ClassInfo());
 	
 		return cllist;

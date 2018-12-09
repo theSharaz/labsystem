@@ -45,7 +45,9 @@ public class FileUploadController {
         String path = request.getSession().getServletContext().getRealPath("upload");  
         String originalfileName = file.getOriginalFilename();  
         String SUFFIX =originalfileName.substring(originalfileName.lastIndexOf("."));
-        String newfileName = originalfileName;  
+        String newfileName = originalfileName; 
+//        String newfileName = new Date().getTime()+SUFFIX;  
+
         
         File uploadedFile = new File(path, newfileName);  
         if(!uploadedFile.exists()){  

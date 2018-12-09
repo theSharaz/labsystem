@@ -1,10 +1,15 @@
 package controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import javax.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;  
 import org.springframework.ui.ModelMap;  
 import org.springframework.web.bind.annotation.*;
@@ -70,9 +75,6 @@ public class ProfController {
   		req.getSession().setAttribute("profe", profe);
   		cllist = clDao.allClass();    		
   		req.getSession().setAttribute("cllist", cllist);
-
-//  		List elist = profDao.getFile(id);
-//  		req.getSession().setAttribute("elist", elist);
   		pcllist = profclDao.allClassByProID(id);    		
   		req.getSession().setAttribute("pcllist", pcllist);
   		
@@ -94,36 +96,29 @@ public class ProfController {
   }
 
 	  @RequestMapping(value="/selectclass/{cid}",method = RequestMethod.GET)
-	    public String getProfClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
+	    public ResponseEntity getProfClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
   		belist = bexpDao.allBookedExpByClass(cid);
   		req.getSession().setAttribute("belist", belist);
 
-	    	return "redirect:../view"; 
-
-
+  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
 	    }
 	  
-	  @RequestMapping(value="/view",method = RequestMethod.GET)
-	  public String Viewpage(HttpServletRequest req) {
-  		int id = (Integer) req.getSession().getAttribute("pid");
 
-
-
-	      return "ViewExpView";  
-	  }
 	  
+	  @RequestMapping(value="/getclassexp/{cid}",method = RequestMethod.GET)
+	    public ResponseEntity getClassExp(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
+		  flist = flDao.getFileByClass(cid);
+		req.getSession().setAttribute("flist", flist);
+
+  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
+
+
 	  
 	    @RequestMapping(value="/deleteprof",method = RequestMethod.GET)  
 	    public String deleteProf(@PathVariable String pid) { 
 	    	return "redirect:../welcome"; 
 	    } 
-	    
-	    @RequestMapping(value="/gets",method = RequestMethod.GET)
-	    public String dodo() {
-	    	return "redirect:welcome"; 
-
-	    }
-	    
 
 	    @RequestMapping(value="/bookexp",method = RequestMethod.POST)
 	    public String BookExp(BookedExp b,@RequestParam(value="name") String name) throws IOException {
@@ -137,6 +132,29 @@ public class ProfController {
 
 
 	    }
+	    
+		@RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
+		   public void downloadFile1(HttpServletResponse response, HttpServletRequest request, @PathVariable String id) throws IOException {
+		      String path = request.getSession().getServletContext().getRealPath("upload");  
+	        System.out.println(id+" before adding pdf");
+
+		      String Name = id+".pdf";
+	        System.out.println(Name+" after adding pdf");
+
+			  File file = new File(path, Name);
+		      response.setContentType("application/pdf");
+		      response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
+		      BufferedInputStream inStrem = new BufferedInputStream(new FileInputStream(file));
+		      BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+		      
+		      byte[] buffer = new byte[1024];
+		      int bytesRead = 0;
+		      while ((bytesRead = inStrem.read(buffer)) != -1) {
+		        outStream.write(buffer, 0, bytesRead);
+		      }
+		      outStream.flush();
+		      inStrem.close();
+		   }
 
     
 

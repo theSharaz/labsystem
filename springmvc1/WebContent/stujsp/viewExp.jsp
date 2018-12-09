@@ -10,67 +10,45 @@
             <table  class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>ID no.</th>
                   <th>Exp Name</th>
                   <th>Stu no.</th>
                   <th>State no.</th>
-                  <th>File</th>
+                  <th>Upload</th>
                 </tr>
               </thead>
               <tbody>
 				<c:forEach items="${sessionScope.flist}" var="f">
           			<tr>
-						<td>${f.id}</td>
 						<td>${f.name}</td>
 						<td>${f.stuNum}</td>
-							<c:set var = "status" value="You need to upload the experiment"/>						
-							<c:if test = "${f.state  eq 1}">
-								<c:set var = "status" value="Experiment Uploaded"/>
-							</c:if>	
+						
+				<c:set var = "status" value="You need to upload the experiment"/>
+				<c:set var = "functon" value="Upload"/>										
+				<c:set var = "down" value=""/>										
+					<c:if test = "${f.state  eq 1}">
+				<c:set var = "status" value="Experiment Uploaded"/>
+				<c:set var = "functon" value="Re-Upload"/>
+				<c:set var = "down" value="Download"/>										
+					
+				</c:if>	
 									
-						<td>${status}</td>
-						<td>${f.file}</td>
+						<td><h5>${status}</h5></td>
+						<td>	<a href="fileupload/${f.id}" onclick="getupload()"><h5>${functon}</h5></a> <a href="download/${f.filename}"><h5>${down}</h5></a>	</td>
            			</tr>
            			
        			</c:forEach>
               </tbody>
-              <tfoot>
-              	  	<button class="open-button" onclick="openForm()">Upload Exp</button>
-              </tfoot>
             </table>
           </div>
-	  	
-	  	
-	  	
-	  	<div class="form-popup" id="myForm">
-			<form action="addfile" method="post" class="form-container" enctype="multipart/form-data">  
-			    <h1>Upload Exp</h1>
-				
-				     <input type="text" name="id" value="${f.id}" readonly/>
-				     <input type="text" name="name" />
-				     <input type="file" name="mfile" /> 
-				     <input type="text" name="stuNum" value="${sessionScope.stud.stuNum}" readonly>
-				     <input type="text" name="classno" value="${sessionScope.stud.classno}" readonly>
-				     <input type="text" name="state" value="1" />     
-				     <input type="submit" value="Submit" />
-			
-			    <button type="submit" class="btn">Add</button>
-			    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-			  </form>
-		</div>
-		
-		
-
+	
 
 	    <script>
 	
 	    
-	    function openForm() {
-	        document.getElementById("myForm").style.display = "block";
-	    }
-	
-	    function closeForm() {
-	        document.getElementById("myForm").style.display = "none";
-	    }
+        function getupload(){
+        	$("#stucont").load('../stujsp/upload.jsp');
+      		return false;
+      	}
+
 
 	    </script>

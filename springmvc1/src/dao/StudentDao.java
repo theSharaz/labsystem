@@ -81,22 +81,5 @@ public class StudentDao {
 
     	return slist;
     }
-	
-	// below should go in file DAO
-    public int addFile(int id, String name, InputStream inputStream, int stunum, int classno) {
-    	int r = 0;
-        String sql = "insert into files values (?,?,?,?,?)";
-        r = jdbcTemplate.update(sql, id, name, inputStream,stunum, classno);
-        return r;
-    }
-    
-//    public List getFile(int id) {
-//    	int r = 0;
-//        String sql = "select * from files WHERE stunum = '"+id+"'";
-//        List nlist = jdbcTemplate.query(sql, new FileInfo());
-//        return nlist;
-//    }
-	
-	
 
 }

@@ -75,19 +75,4 @@ public class ProfessorDao {
 	return pro;
 }
 	
-//    public List getFile(int id) {
-//    	List<Files> flist=new ArrayList<Files>();
-//
-//    	int r = 0;
-//        String sql = "select distinct f.id, f.name, f.stuNum, f.file, f.classno from files f,class c, professor p where c.classno = f.classno AND  '"+id+"'=c.profnum;";
-//        flist = jdbcTemplate.query(sql, new FilesInfo());
-//        return flist;
-//    }
-//    
-    public void letsdoit(String chi) {
-    	System.out.println("ZVAITA "+chi);
-    }
-    
-    
-
 }

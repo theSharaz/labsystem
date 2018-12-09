@@ -5,8 +5,6 @@
 
 <h3>Student home page</h3>
 
-
-
 <div class="container">
 	<div class="row">
 		<div class="col-md-offset-10 col-md-8 col-lg-offset-3 col-lg-6">
@@ -45,7 +43,6 @@
 		</div>
 		
 		<script>
-	
 	    
 	    function openForm() {
 	        document.getElementById("myForm").style.display = "block";

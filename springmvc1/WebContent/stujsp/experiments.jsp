@@ -51,34 +51,10 @@
            			
        			</c:forEach>
               </tbody>
-              <tfoot>
-				<button class="open-button" onclick="openForm()">Upload Exp</button>
-              </tfoot>
             </table>
           </div>
 	  	
-	  	<div class="form-popup" id="myForm">			    				
-			<form action="upload" method="post" class="form-container" enctype="multipart/form-data">  
-			    <h1>Upload Exp</h1>
-			     <input type="text" name="name" />
-			     <input type="file" name="file" /> 
-			     <input type="submit" value="Submit" />
- 			</form>  
-		</div>
-	  	
 	    <script>
-	    function getPage4(){
 
-	        function openForm() {
-		        document.getElementById("myForm").style.display = "block";
-		    }
-		
-		    function closeForm() {
-		        document.getElementById("myForm").style.display = "none";
-		    }
-			alert("BOOK");
-	    	$("#profcont").load('../stujsp/viewExp.jsp');
-			return false;
-		}
-	  
+	    
 	    </script>

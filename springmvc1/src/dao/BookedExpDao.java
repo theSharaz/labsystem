@@ -41,14 +41,14 @@ public class BookedExpDao {
 			Files f = new Files();
 			f.setId(0);
 			f.setName(name);
-	    	f.setInputStream(null);
+	    	f.setFilename(null);
 	    	f.setStuNum(s.getStuNum());
 	    	f.setClassno(b.getClassno());
 	    	f.setState(0);
 	    	
 	    	z=flDao.addFile(f);
 			if(z>0) {
-				System.out.println(s.getStuNum()+"'s "+name+" experiment addded");
+				System.out.println(s.getStuNum()+"'s "+name+" experiment addded FROM BOOKED EXP DAO ADDBOOKED ExP");
 			}
 		}
 		 

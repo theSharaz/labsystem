@@ -1,6 +1,9 @@
 package controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -13,7 +16,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;  
 import org.springframework.ui.ModelMap;  
 import org.springframework.web.bind.annotation.*;
@@ -50,52 +55,42 @@ public class StuController {
     	if(stuDao.validate(st)) {
     		req.getSession().setAttribute("uid", st.getStuNum());
     		int id = st.getStuNum();
-
-    		
-
-    		
     		return "redirect:welcome";
     	}else {
-
     		return "redirect:login";
     	} 
     }
      
 
-    
-//    @RequestParam(value="id") int id,@RequestParam(value="stuNum") int stuNum,@RequestParam(value="classno") int classno,@RequestParam(value="name") String name,@RequestParam(value = "file", required = false) File file,
-//	@RequestParam(value="state") int state,ModelMap model, HttpServletRequest req
-   
-    @RequestMapping(value="/addfile", method = RequestMethod.POST)
-    public String addfile(Files f, HttpServletRequest req) {
-    Student stud = (Student) req.getSession().getAttribute("stud");
-      int r=0;
-      System.out.println("Name of file is "+f.getName()+" from stucontroller add file");
-      String path = req.getSession().getServletContext().getRealPath("upload");  
-      String originalfileName = f.getMfile().getOriginalFilename();  
-      String extName=originalfileName.substring(originalfileName.lastIndexOf("."));
-      String newfileName = new Date().getTime()+extName;  
-      File targetFile = new File(path, newfileName);  
-      f.setFile(targetFile);
-      try {
-		r = flDao.stuAddFile(f);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-      if(r>0) {
-          System.out.println("Upload ya "+stud.getStuNum()+" yaita");
-      }
+    @RequestMapping(value = "/uploadfile" , method = RequestMethod.POST)  
+    public String upload(Files f,@RequestParam(value = "file", required = false) MultipartFile file, 
+    		  HttpServletRequest request, ModelMap model) {  
+  
+       
+        String path = request.getSession().getServletContext().getRealPath("upload");  
+        String originalfileName = file.getOriginalFilename();  
+        String SUFFIX =originalfileName.substring(originalfileName.lastIndexOf("."));
+//        String newfileName = originalfileName; 
+      String newfileName = new Date().getTime()+SUFFIX;  
+
+        
+        File uploadedFile = new File(path, newfileName);  
+        if(!uploadedFile.exists()){  
+        	uploadedFile.mkdirs();  
+        }  
+  
+        try {  
+        	file.transferTo(uploadedFile); 
+        	f.setFilename(newfileName);
+        	flDao.stuAddFile(f);
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+  
 		return "redirect:welcome";
-    }
+    }  
     
-    
-//    @RequestMapping(value="/download",method = RequestMethod.GET)
-//    public String upload(ModelMap model) throws FileUploadException, IOException, ServletException { 
-//
-//    	stuDao.getFile(id)
-//    	
-//		return "redirect:welcome";
-//    }
+
     
 	  @RequestMapping(value="/welcome",method = RequestMethod.GET)
 	  public String Welcomepage(HttpServletRequest req) {
@@ -105,26 +100,56 @@ public class StuController {
     		
   		Student stud = stuDao.queryStudentByID(id);
   		req.getSession().setAttribute("stud", stud);
-//  		List nlist = stuDao.getFile(id);
-//  		req.getSession().setAttribute("nlist", nlist);
-		  
 	 		belist = bexpDao.allBookedExpByClass(stud.getClassno());
 	  		req.getSession().setAttribute("belist", belist);
-	  		System.out.println("size of belist "+belist.size()+" from Stucontroller welcome");
-	  		
 	 		flist = flDao.getFileByStu(stud.getStuNum());
 	  		req.getSession().setAttribute("flist", flist);
-	  		System.out.println("size of file list "+flist.size()+" from Stucontroller welcome");
-	  		
-	  		
-
-			
 	      return "welcomeStu";  
 	  } 
+	  
+	  @RequestMapping(value="/lelele",method = RequestMethod.GET)
+	  public ResponseEntity lelele(HttpServletRequest req) { 
+		  String pulp = "THE DAMN FUNCTION IS WORKING T";
+	  		req.getSession().setAttribute("pulp", pulp);
+	  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+
+  } 
 	  
 	  @RequestMapping(value="/changePass",method = RequestMethod.POST)
 	  public String changePassw(Student stu) { 
 		  stuDao.changePassword(stu);
 		return "redirect:welcome";
   } 
+	  
+	  @RequestMapping(value="/fileupload/{id}",method = RequestMethod.GET)
+	  public ResponseEntity FileUpload(HttpServletRequest req,@PathVariable String id) {
+		 Files fil =  flDao.getFileByID(id);
+	  		System.out.println("SC fileupload: file "+fil.getName()+" has been retrieved from from the DB");
+
+	  		req.getSession().setAttribute("fil", fil);
+
+	  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	  }
+
+		@RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
+		   public void downloadFile1(HttpServletResponse response, HttpServletRequest request, @PathVariable String id) throws IOException {
+		      String path = request.getSession().getServletContext().getRealPath("upload");  
+		      String Name = id+".pdf";
+			  File file = new File(path, Name);
+		      response.setContentType("application/pdf");
+		      response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
+		      BufferedInputStream inStrem = new BufferedInputStream(new FileInputStream(file));
+		      BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+		      
+		      byte[] buffer = new byte[1024];
+		      int bytesRead = 0;
+		      while ((bytesRead = inStrem.read(buffer)) != -1) {
+		        outStream.write(buffer, 0, bytesRead);
+		      }
+		      outStream.flush();
+		      inStrem.close();
+		   }
+	  
 }
+
+

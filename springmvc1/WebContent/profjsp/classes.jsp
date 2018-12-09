@@ -16,7 +16,7 @@
 				<c:forEach items="${sessionScope.pcllist}" var="pcl">
           			<tr>
              			<td>${pcl.profnum}</td>          			
-             			<td><a class="nav-link" href="selectclass/${pcl.classno}">${pcl.classno}</a></td>
+             			<td><a class="nav-link" href="selectclass/${pcl.classno}" onclick="getviewBookedExp()">${pcl.classno}</a></td>
            			</tr>
            			
        			</c:forEach>
@@ -24,7 +24,16 @@
             </table>
           </div>
           
- 
+          
+          <script>
+          
+          function getviewBookedExp(){
+          	$("#profcont").load('../profjsp/viewBookedExp.jsp');
+      		return false;
+      	}
+          
+          </script>
+ 		
           
 
           
