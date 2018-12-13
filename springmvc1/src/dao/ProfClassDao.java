@@ -41,6 +41,19 @@ public class ProfClassDao {
 
 	  	return plist;
 	  }
+  
+  public ProfClass classByClassID(int classno){
+	  
+	  ProfClass pc = new ProfClass();
+	  	List<ProfClass> plist=new ArrayList<ProfClass>();
+
+		String sql = "select * from profclass where classno ='" + classno + "'";
+		plist = jdbcTemplate.query(sql, new ProfClassInfo());
+		for(ProfClass p: plist) {
+			pc=p;
+		}
+	  	return pc;
+	  }
 	
 	public class ProfClassInfo implements RowMapper, Serializable{
 	public ProfClass mapRow(ResultSet rs, int rowNum) throws SQLException{

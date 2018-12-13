@@ -1,6 +1,8 @@
 package dao;
 import java.util.*;
 import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;																																																																																																																																																																																																																																																																																																																																					
 import entity.*;
@@ -10,11 +12,13 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 @Component("stuclDao")
-
 public class StuClassDao {
 	
 	@Resource(name="jdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	StudentDao stuDao;
 
   public void addClass(StuClass p) {
   String sql = "insert into stuclass values (?,?)";
@@ -34,13 +38,18 @@ public List<StuClass> allClass(){
 	return plist;
 }
 
-public List<StuClass> allClassByStuID(int stunum){
+public List<Student> allClassByStuClassID(int classno){
   	List<StuClass> plist=new ArrayList<StuClass>();
+  	List<Student> slist=new ArrayList<Student>();
 
-	String sql = "select * from stuclass where stunum ='" + stunum + "'";
+	String sql = "select * from stuclass where classno ='" + classno + "'";
 	plist = jdbcTemplate.query(sql, new StuClassInfo());
 
-  	return plist;
+	for(StuClass s:plist) {
+		slist.add(stuDao.queryStudentByID(s.getStunum()));
+	}
+
+  	return slist;
   }
 
 public List<StuClass> allClassByClassID(int classno){

@@ -95,13 +95,13 @@ public class ProfController {
 		return "redirect:welcome";
   }
 
-	  @RequestMapping(value="/selectclass/{cid}",method = RequestMethod.GET)
-	    public ResponseEntity getProfClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
-  		belist = bexpDao.allBookedExpByClass(cid);
-  		req.getSession().setAttribute("belist", belist);
-
-  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
-	    }
+//	  @RequestMapping(value="/selectclass/{cid}",method = RequestMethod.GET)
+//	    public ResponseEntity getProfClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
+//  		belist = bexpDao.allBookedExpByClass(cid);
+//  		req.getSession().setAttribute("belist", belist);
+//
+//  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+//	    }
 	  
 
 	  

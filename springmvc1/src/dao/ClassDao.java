@@ -23,6 +23,20 @@ import entity.Class;
     public void addClass(Class c) {
     String sql = "insert into class values (?,?)";
     jdbcTemplate.update(sql, new Integer(c.getClassno()), c.getName());
-}
+    }	
+    
+    public Class getClassByID(int classno) {
+    	Class c = new Class();
+    	
+		List<Class> cllist=new ArrayList<Class>();
+		String sql="select * from class where classno = '"+classno+"' order by classno";
+		cllist = jdbcTemplate.query(sql, new ClassInfo());
+		
+		for(Class cl: cllist) {
+			c = cl;
+		}
+    	return c;
+    }
+    
 	
 }	
