@@ -42,7 +42,7 @@ public class FilesDao {
 	        return r;
 	    }
 	    
-	    public List getFileByStu(int id) {
+	    public List<Files> getFileByStu(int id) {
 	        String sql = "select * from files WHERE stunum = '"+id+"'";
 	        List nlist = jdbcTemplate.query(sql, new FilesInfo());
 	        return nlist;
@@ -57,6 +57,19 @@ public class FilesDao {
 				f =s;
 			}
 	        return f;
+	    }
+	    
+	    public List<Files> getFileByStuClassID(String stunum, String classno) {
+	    	List<Files> flist =  new ArrayList<Files>();
+	        String sql = "select * from files WHERE classno = '"+classno+"' AND stuNum = '"+stunum+"'";
+
+	        return flist;
+	    }
+	    public List<Files> getFileByStuClassID(int stunum, int classno) {
+	    	List<Files> flist =  new ArrayList<Files>();
+	        String sql = "select * from files WHERE classno = '"+classno+"' AND stuNum = '"+stunum+"'";
+
+	        return flist;
 	    }
 
 	    public List getFileByClass(int id) {

@@ -3,17 +3,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	
-     <h1 style="color:red"> Class :${sessionScope.clas.name} Class#: ${sessionScope.clas.classno} </h1>
-     
+     <h1 style="color:red"> Class :${sessionScope.clas.name} Class no: ${sessionScope.clas.classno} </h1>
+       <div class="col-xs-6">
+		<h2 class="sub-header">Professor and Students</h2>    
           <div class="table-responsive">
             <table  class="table table-striped table-sm">
               <thead>
-              
                 <tr colspan="2">
-                 
-                 <h5>Professor: ${sessionScope.prof.profnum} 
-                 Professor's Name: ${sessionScope.prof.name}</h5>
-                  
+                 <h4>Professor: ${sessionScope.prof.profnum} 
+                 Professor's Name: ${sessionScope.prof.name}</h4>
                 </tr>              
                 <tr>
                   <th>Student No.</th>
@@ -25,7 +23,7 @@
                 </tr>
               </thead>
               <tbody>
-				<c:forEach items="${sessionScope.slist}" var="s">
+				<c:forEach items="${sessionScope.stlist}" var="s">
           			<tr>
 						<td>${s.stuNum}</td>
              			<td>${s.name}</td>
@@ -41,23 +39,27 @@
               </tbody>
             </table>          
           </div>
+        </div>
           
           
  		<div class="form-popup" id="myForm">
 			<form action="addStuClass" method="post" class="form-container">
-			    <h1>Add Student to Class</h1>				
-				<input type=text name="classno" value="${sessionScope.clas.classno}" readonly>
-				<select name="stuNum">
-					<c:forEach items="${sessionScope.stulist}" var="t">
-						<option value="${t.stuNum}">${t.stuNum}</option>
-					</c:forEach>
+			    <h1>Add Student to Class</h1>
+				<input type="hidden" name="id" value="0" readonly>
+			    				
+				<input type="text" name="classno" value="${sessionScope.clas.classno}" readonly>
+				<select name="stunum">
+					<c:forEach items="${sessionScope.sslist}" var="c">
+						<option value="${c.stuNum}">${c.stuNum}</option>
+					</c:forEach>					
 			  	</select>			    
 			  	<button type="submit" class="btn" onclick="getClassContent()">Add</button>
 			    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
 			  </form>
 		</div>            
           
-          
+       <div class="col-xs-6">
+		<h2 class="sub-header">Timetable</h2>            
           <div class="table-responsive">
             <table  class="table table-striped table-sm">
               <thead>
@@ -84,7 +86,10 @@
               </tbody>
             </table>
           </div>
-          
+         </div>
+
+       <div class="col-xs-6">
+		<h2 class="sub-header">Experiments</h2>          
           <div class="table-responsive">
             <table  class="table table-striped table-sm">
               <thead>
@@ -117,7 +122,9 @@
               </tbody>
 
             </table>
-          </div>         
+          </div> 
+        </div> 
+          
           
 
 	    <script>
@@ -129,5 +136,14 @@
           		},
           		200);
         }
+        
+        
+	    function openForm() {
+	        document.getElementById("myForm").style.display = "block";
+	    }
+	
+	    function closeForm() {
+	        document.getElementById("myForm").style.display = "none";
+	    }
 
 	    </script>

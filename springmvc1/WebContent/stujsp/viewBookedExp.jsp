@@ -8,7 +8,6 @@
             <table  class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>ID no.</th>
                   <th>Class no.</th>
                   <th>Week no.</th>
                   <th>Day</th>
@@ -20,7 +19,6 @@
               <tbody>
 				<c:forEach items="${sessionScope.belist}" var="be">
           			<tr>
-						<td>${be.id}</td>
              			<td><a class="nav-link" href="#" onclick="getPage4()">${be.classno}</a></td>
 						<td>${be.week}</td>
 						<td>${be.day}</td>
@@ -41,7 +39,7 @@
 	    function getPage4(){
 
 			alert("BOOK");
-	    	$("#profcont").load('../profjsp/viewExp.jsp');
+	    	$("#stucont").load('../stujsp/viewExp.jsp');
 			return false;
 		}
 	  

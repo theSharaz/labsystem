@@ -1,22 +1,7 @@
-//alert("Working!");
 	
     $(document).ready(function(){
-    	
-    	
-//    	var lepag;
-//    	
-//    	if(lepag==null){
-//        	$("#cont").load('../myjsp/admin.jsp');
-//        	alert(lepag);
-//    	}
-//    	else{
-//    	//initial 
-//
-//		$("#cont").load('../myjsp/'+lepag+'.jsp');
-//		alert(page);
-//    	}
-    	
-    	//initial 
+    	alert("Working!");
+
     	$("#stucont").load('../stujsp/info.jsp');
     	
     	//handle menu clicks

@@ -4,7 +4,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	  	<h2>My Experiments</h2>
 	  		
-	  		
+	  		${sessionScope.stud.name}
 	  		
 	  	  <div class="table-responsive">
             <table  class="table table-striped table-sm">

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import entity.*;
+import entity.Class;
 import dao.*;
 
 @Controller  
@@ -37,10 +38,21 @@ public class StuController {
 	BookedExpDao bexpDao;
 	@Autowired
 	FilesDao flDao;
+	@Autowired
+	StuClassDao stuclDao;
+	@Autowired
+	ClassDao clDao;
+	@Autowired
+	StateDao stateDao;
 	
     static List<Student> slist =new ArrayList<Student>();
     static List<BookedExp> belist =new ArrayList<BookedExp>();
     static List<Files> flist =new ArrayList<Files>();
+    static List<StuClass> cllist =new ArrayList<StuClass>();
+    static List<Class> sclist =new ArrayList<Class>();
+    static List<Class> clalist =new ArrayList<Class>();
+    static int classate = 0;
+    
 	HttpServletResponse res;
 
 
@@ -94,17 +106,21 @@ public class StuController {
     
 	  @RequestMapping(value="/welcome",method = RequestMethod.GET)
 	  public String Welcomepage(HttpServletRequest req) {
-  		req.getSession().setAttribute("uid", 20150001);
 
 		int id = (Integer) req.getSession().getAttribute("uid");
-    		
   		Student stud = stuDao.queryStudentByID(id);
   		req.getSession().setAttribute("stud", stud);
-	 		belist = bexpDao.allBookedExpByClass(stud.getClassno());
-	  		req.getSession().setAttribute("belist", belist);
-	 		flist = flDao.getFileByStu(stud.getStuNum());
-	  		req.getSession().setAttribute("flist", flist);
-	      return "welcomeStu";  
+	  		
+  		sclist = stuclDao.allStuClassByID(stud.getStuNum());
+  		req.getSession().setAttribute("sclist", sclist);	
+  		
+ 		flist = flDao.getFileByStu(stud.getStuNum());
+  		req.getSession().setAttribute("flist", flist);
+  		
+
+  		System.out.println("Size of file list is "+flist.size());
+  		
+      return "welcomeStu";  
 	  } 
 	  
 	  @RequestMapping(value="/lelele",method = RequestMethod.GET)
@@ -131,25 +147,44 @@ public class StuController {
 	  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
 	  }
 
-		@RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
-		   public void downloadFile1(HttpServletResponse response, HttpServletRequest request, @PathVariable String id) throws IOException {
-		      String path = request.getSession().getServletContext().getRealPath("upload");  
-		      String Name = id+".pdf";
-			  File file = new File(path, Name);
-		      response.setContentType("application/pdf");
-		      response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
-		      BufferedInputStream inStrem = new BufferedInputStream(new FileInputStream(file));
-		      BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
-		      
-		      byte[] buffer = new byte[1024];
-		      int bytesRead = 0;
-		      while ((bytesRead = inStrem.read(buffer)) != -1) {
-		        outStream.write(buffer, 0, bytesRead);
-		      }
-		      outStream.flush();
-		      inStrem.close();
-		   }
+	@RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
+	   public void downloadFile1(HttpServletResponse response, HttpServletRequest request, @PathVariable String id) throws IOException {
+	      String path = request.getSession().getServletContext().getRealPath("upload");  
+	      String Name = id+".pdf";
+		  File file = new File(path, Name);
+	      response.setContentType("application/pdf");
+	      response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
+	      BufferedInputStream inStrem = new BufferedInputStream(new FileInputStream(file));
+	      BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+	      
+	      byte[] buffer = new byte[1024];
+	      int bytesRead = 0;
+	      while ((bytesRead = inStrem.read(buffer)) != -1) {
+	        outStream.write(buffer, 0, bytesRead);
+	      }
+	      outStream.flush();
+	      inStrem.close();
+	   }
 	  
+	  @RequestMapping(value="/selectclass/{cid}",method = RequestMethod.GET)
+	  public ResponseEntity getStuClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
+	
+		  int id = (Integer) req.getSession().getAttribute("uid");
+
+		  belist = bexpDao.allBookedExpByClass(cid);
+		  req.getSession().setAttribute("belist", belist);
+		  return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+	  
+	  
+//	    @RequestMapping(value="/bookexp",method = RequestMethod.POST)
+//	    public String BookExp(BookedExp b,@RequestParam(value="name") String name) throws IOException {
+//	    	bexpDao.addBookedExp(b, name);
+//	    	return "redirect:view"; 
+//
+//	    }
+		
+		
 }
 
 

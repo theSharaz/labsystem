@@ -38,6 +38,7 @@ public class AdminContoller {
 	
     static List<Professor> plist =new ArrayList<Professor>();
     static List<Student> slist =new ArrayList<Student>();
+    static List<Student> sslist =new ArrayList<Student>();
     static List<Class> clist =new ArrayList<Class>();
     static List<StuClass> sclist =new ArrayList<StuClass>();
     static List<ProfClass> pclist =new ArrayList<ProfClass>();
@@ -85,9 +86,7 @@ public class AdminContoller {
     		return "redirect:login";
     	} 
     }  
-    
-	;
-    
+
     @RequestMapping(value="/welcome",method = RequestMethod.GET)
     public String Welcomepage(HttpServletRequest req) {
     	plist = profDao.allProfessors();
@@ -137,25 +136,14 @@ public class AdminContoller {
 			Class clas =  new Class();
 			clas = clDao.getClassByID(classno);
 			req.getSession().setAttribute("clas", clas);
-		  	slist = stuclDao.allClassByStuClassID(classno);
-			req.getSession().setAttribute("slist", slist);
+		    List<Student> stlist =new ArrayList<Student>();
+
+		    stlist = stuclDao.allClassByStuClassID(classno);
+			req.getSession().setAttribute("stlist", stlist);
 			
-		    List<Student> stulist =new ArrayList<Student>();
-		    stulist = stuDao.allStudents();
-		    
-		    for(int i=stulist.size()-1;i>=0;i--) {
-
-			    for(int j=0;j<slist.size();j++) {
-			    	 if(stulist.get(i).getStuNum()==slist.get(j).getStuNum()) {
-			 			System.out.println(stulist.get(i).getStuNum() +" = "+ slist.get(j).getStuNum());
-			 			
-
-			    	 }
-			    }
-		    }
-			System.out.println("# of students: "+stulist.size());
-			req.getSession().setAttribute("stulist", stulist);
-
+			sslist = stuclDao.studentsNotInClassByClassID(classno);
+			req.getSession().setAttribute("sslist", sslist);
+			
 			
 			ProfClass pc = profclDao.classByClassID(classno);
 			Professor prof = new Professor();
@@ -171,11 +159,9 @@ public class AdminContoller {
 	  
 	  
 	  @RequestMapping(value="/addStuClass",method = RequestMethod.POST)
-	  public ResponseEntity addStutoClass(@PathVariable(value = "stuNum") int stuNum,@PathVariable(value = "classno") int classno) { 
-		  
-		  StuClass st = new StuClass(0, classno, stuNum);
+	  public ResponseEntity addStutoClass(StuClass st) { 
+
 		  stuclDao.addClass(st);
-		  
 		return new ResponseEntity(HttpStatus.NO_CONTENT);
   }  
 
