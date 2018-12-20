@@ -1,6 +1,5 @@
 	
     $(document).ready(function(){
-    	alert("Working!");
 
     	$("#stucont").load('../stujsp/info.jsp');
     	

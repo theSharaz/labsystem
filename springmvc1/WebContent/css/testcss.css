@@ -4,7 +4,7 @@
 }
 
 .nav.nav-pills>li+li {
-  margin-left: 2px;
+  margin-left: 0px;
   /*orig: 2px*/
 }
 

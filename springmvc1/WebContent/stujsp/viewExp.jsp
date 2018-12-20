@@ -7,9 +7,9 @@
 	  		${sessionScope.stud.name}
 	  		
 	  	  <div class="table-responsive">
-            <table  class="table table-striped table-sm">
-              <thead>
-                <tr>
+	      <table class="table table-bordered table-striped table-hover">
+	        <thead>
+	          <tr class="table-head"> 
                   <th>Exp Name</th>
                   <th>Stu no.</th>
                   <th>State no.</th>

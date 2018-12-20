@@ -37,10 +37,36 @@ public class BookDao {
 	
 		return r;
 	}
+		
+	    public AvailableTime queryAvailableTimebyID(String id){
+	    	List<AvailableTime> avlist=new ArrayList<AvailableTime>();
+	    	AvailableTime at = new AvailableTime();
+	    	String sql="select * from availabletime where availableid =? order by week";
+	    	avlist = jdbcTemplate.query(sql, new AvailableTimeInfo(),id);
+	    	
+	    	for(AvailableTime a:avlist) {
+	    		at = a;
+	    	}
+	    	
+	    	return at;
+	    }
+	    
+	    public AvailableTime queryAvailableTimebyID(int id){
+	    	List<AvailableTime> avlist=new ArrayList<AvailableTime>();
+	    	AvailableTime at = new AvailableTime();
+	    	String sql="select * from availabletime where availableid =? order by week";
+	    	avlist = jdbcTemplate.query(sql, new AvailableTimeInfo(),id);
+	    	
+	    	for(AvailableTime a:avlist) {
+	    		at = a;
+	    	}
+	    	
+	    	return at;
+	    }
 	  
 	    public List<AvailableTime> queryAllAvailableTime(){
 	    	List<AvailableTime> avlist=new ArrayList<AvailableTime>();
-	    	String sql="select * from availabletime";
+	    	String sql="select * from availabletime order by week";
 	    	avlist = jdbcTemplate.query(sql, new AvailableTimeInfo());
 	    	
 	    	for(AvailableTime a:avlist) {
@@ -54,7 +80,7 @@ public class BookDao {
 	    
 	    public List<AvailableTime> queryAvailableTimeByWEEK(String week){
 	    	List<AvailableTime> avlist=new ArrayList<AvailableTime>();
-	    	String sql="select * from availabletime where week=?";
+	    	String sql="select * from availabletime where week=? order by week";
 	    	avlist = jdbcTemplate.query(sql, new AvailableTimeInfo(), week);
 	    	for(AvailableTime a:avlist) {
 	    		if(a.getState()==0) {
@@ -66,7 +92,7 @@ public class BookDao {
 	    
 	    public List<AvailableTime> queryAvailableTimeByROOM(String room){
 	    	List<AvailableTime> avlist=new ArrayList<AvailableTime>();
-	    	String sql="select * from availabletime where room=?";
+	    	String sql="select * from availabletime where room=? order by week";
 	    	avlist = jdbcTemplate.query(sql, new AvailableTimeInfo(), room);
 	    	for(AvailableTime a:avlist) {
 	    		if(a.getState()==0) {
@@ -127,6 +153,18 @@ public class BookDao {
 		    	return aplist;
 		    }
 		    
+		    public Application queryApplicationByID(String appid){
+		    	List<Application> aplist=new ArrayList<Application>();
+		    	Application ap = new Application();
+		    	String sql="select * from application where appid=?";
+		    	aplist = jdbcTemplate.query(sql, new ApplicationInfo(), appid);
+		     	for(Application a: aplist) {
+		     		ap=a;
+				    	return ap;
+
+		     	}
+		    	return ap;
+		    }
 		    
 		    public List<Application> queryApplicationByClass(String classno){
 		    	List<Application> aplist=new ArrayList<Application>();
@@ -144,13 +182,29 @@ public class BookDao {
 		    	return aplist;
 		    }		    
 		    
+		    public List<Application> queryApplicationByWEEKandClassno(String week,String classno){
+		    	List<Application> aplist=new ArrayList<Application>();
+		    	String sql="select * from application where week=? and classno=?";
+		    	aplist = jdbcTemplate.query(sql, new ApplicationInfo(), week,classno);
+
+		    	return aplist;
+		    }
+		    
 		    public List<Application> queryApplicationByStu(String stunum){
 		    	List<Application> aplist=new ArrayList<Application>();
 		    	String sql="select * from application where stunum=?";
 		    	aplist = jdbcTemplate.query(sql, new ApplicationInfo(), stunum);
 
 		    	return aplist;
-		    }		    
+		    }
+		    
+		    public List<Application> queryApplicationByStu(int stunum){
+		    	List<Application> aplist=new ArrayList<Application>();
+		    	String sql="select * from application where stunum=?";
+		    	aplist = jdbcTemplate.query(sql, new ApplicationInfo(), stunum);
+
+		    	return aplist;
+		    }
 		    
 		  
 		    public class ApplicationInfo implements RowMapper, Serializable {
@@ -182,6 +236,8 @@ public class BookDao {
 				  if(cou<=10) {
 					  r = jdbcTemplate.update(sql, new Integer(apt.getApprovedid()), new Integer(apt.getClassno()),new Integer(apt.getStunum()), 
 							  apt.getWeek(), apt.getDay(), apt.getStart(), apt.getFinish(),  apt.getRoom(), new Integer(apt.getAvailableid()));
+						 System.out.println("Approved week ="+ apt.getWeek());
+
 					  if(r!=0&&cou==10) {
 						  //removes an available time if approved bookings are full
 						  toogleAvailableTimeStatus(0,apt.getAvailableid());
@@ -209,7 +265,7 @@ public class BookDao {
 			    public List<ApprovedTime> queryAllApprovedTime(){
 			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
 			    	String sql="select * from approvedtime";
-			    	atlist = jdbcTemplate.query(sql, new ApplicationInfo());
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo());
 
 			    	return atlist;
 			    }
@@ -217,24 +273,40 @@ public class BookDao {
 			    public List<ApprovedTime> queryApprovedTimeByStu(int stunum){
 			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
 			    	String sql="select * from approvedtime where stunum=?";
-			    	atlist = jdbcTemplate.query(sql, new ApplicationInfo(), stunum);
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo(), stunum);
 
 			    	return atlist;
 			    }	
 			    
-			    public List<ApprovedTime> queryApprovedTimeByClass(int classno){
+			    public List<ApprovedTime> queryApprovedTimeByClass(String classno){
 			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
 			    	String sql="select * from approvedtime where classno=?";
-			    	atlist = jdbcTemplate.query(sql, new ApplicationInfo(), classno);
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo(), classno);
 
 			    	return atlist;
 			    }	
+			    
+			    public List<ApprovedTime> queryApprovedTimeByWeek(String week){
+			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
+			    	String sql="select * from approvedtime where week=?";
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo(), week);
+
+			    	return atlist;
+			    }	
+			    
+			    public List<ApprovedTime> queryApprovedTimeByWEEKandClassno(String week,String classno){
+			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
+			    	String sql="select * from approvedtime where week=? and classno=?";
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo(), week,classno);
+
+			    	return atlist;
+			    }
 			  
 			    public ApprovedTime queryApprovedTimeByID(int approvedid){
 			    	List<ApprovedTime> atlist=new ArrayList<ApprovedTime>();
 			    	ApprovedTime at = new ApprovedTime();
 			    	String sql="select * from approvedtime where approvedid=?";
-			    	atlist = jdbcTemplate.query(sql, new ApplicationInfo(), approvedid);
+			    	atlist = jdbcTemplate.query(sql, new ApprovedTimeInfo(), approvedid);
 			    	
 			     	for(ApprovedTime a: atlist) {
 			     		at=a;

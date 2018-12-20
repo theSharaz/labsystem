@@ -5,7 +5,19 @@
 
 <h3>Student home page</h3>
 
-<div class="container">
+
+<div class="card" style="width: 30rem;">
+  <div class="card-body">
+    <h5 class="card-title">Hello ${sessionScope.stud.name}</h5>
+    <h6 class="card-subtitle mb-2 text-muted"><strong>Student No: </strong>${sessionScope.stud.stuNum}</h6>
+    <p class="card-text"><strong>Class No: </strong>${sessionScope.stud.classno}</p>
+    <p class="card-text"><strong>Address No: </strong>${sessionScope.stud.address}</p>
+    <p class="card-text"><strong>Email: </strong>${sessionScope.stud.email}</p>
+    <p class="card-text"><strong>Phone No: </strong>${sessionScope.stud.phone}</p>    
+</div>
+
+</div>
+<%-- <div class="container">
 	<div class="row">
 		<div class="col-md-offset-10 col-md-8 col-lg-offset-3 col-lg-6">
     	 <div class="well profile">
@@ -22,7 +34,21 @@
     	 </div>                 
 		</div>
 	</div>
-</div>
+</div> --%>
+
+	<p>
+		<h2>Please read and understand student user privileges.</h2> <br>
+		<br>
+		<h2>Student Guide:</h2> <br>
+		<br>
+		<h2>1) If you are not attending class bookd experiments please make sure you make your own booking</h2> <br>
+		<br>
+		<h2>2) When you make a booking application please make sure to check whether the time has been approved or not</h2> <br>
+		<br>
+		<h2>3) When you upload experiments make sure they are in PDF format</h2> <br>
+		<br>		
+
+	</p>
 		<button class="open-button" onclick="openForm()">Change Password</button>
 			
 		 <div class="form-popup" id="myForm">

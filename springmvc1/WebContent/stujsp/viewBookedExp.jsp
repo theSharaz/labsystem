@@ -4,10 +4,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	  	<h2>Booked Exp</h2>
 	  	
-	  	          <div class="table-responsive">
-            <table  class="table table-striped table-sm">
-              <thead>
-                <tr>
+         <div class="table-responsive">
+	      <table class="table table-bordered table-striped table-hover">
+	        <thead>
+	          <tr class="table-head"> 
                   <th>Class no.</th>
                   <th>Week no.</th>
                   <th>Day</th>

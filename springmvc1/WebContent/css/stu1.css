@@ -83,3 +83,16 @@ span.tags
     margin-left: -10px;
     z-index: 10;
     }
+    
+    .pb-cmnt-container {
+    font-family: Lato;
+    margin-top: 100px;
+}
+
+.pb-cmnt-textarea {
+    resize: none;
+    padding: 20px;
+    height: 50%;
+    width: 100%;
+    border: 1px solid #F2F2F2;
+}

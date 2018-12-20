@@ -7,7 +7,7 @@
 
 
 
-<div class="container">
+<%-- <div class="container">
 	<div class="row">
 		<div class="col-md-offset-10 col-md-8 col-lg-offset-3 col-lg-6">
     	 <div class="well profile">
@@ -23,6 +23,17 @@
     	 </div>                 
 		</div>
 	</div>
+</div> --%>
+
+<div class="card" style="width: 30rem;">
+  <div class="card-body">
+    <h5 class="card-title">Hello Professor ${sessionScope.profe.name}</h5>
+    <h6 class="card-subtitle mb-2 text-muted"><strong>Professor No: </strong>${sessionScope.profe.profnum}</h6>
+        <p><strong>Address No: </strong>${sessionScope.profe.address}</p>
+        <p><strong>Email: </strong>${sessionScope.profe.email}</p>
+        <p><strong>Phone No: </strong>${sessionScope.profe.phone}</p>   
+</div>
+
 </div>
 		<button class="open-button" onclick="openForm()">Change Password</button>
 			

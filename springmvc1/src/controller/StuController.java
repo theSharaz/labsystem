@@ -44,6 +44,12 @@ public class StuController {
 	ClassDao clDao;
 	@Autowired
 	StateDao stateDao;
+	@Autowired
+	ExpRoomDao exproomDao;
+	@Autowired
+	BookDao bookDao;
+	@Autowired
+	FeedbackDao fdDao;
 	
     static List<Student> slist =new ArrayList<Student>();
     static List<BookedExp> belist =new ArrayList<BookedExp>();
@@ -51,6 +57,12 @@ public class StuController {
     static List<StuClass> cllist =new ArrayList<StuClass>();
     static List<Class> sclist =new ArrayList<Class>();
     static List<Class> clalist =new ArrayList<Class>();
+    static List<ExpRoom> rlist =new ArrayList<ExpRoom>();
+    static List<AvailableTime> avlist =new ArrayList<AvailableTime>();
+    static List<Application> aplist =new ArrayList<Application>();
+    static List<ApprovedTime> atlist =new ArrayList<ApprovedTime>();
+    static List<Feedback> fdlist =new ArrayList<Feedback>();
+    Student stud = new Student();
     static int classate = 0;
     
 	HttpServletResponse res;
@@ -66,7 +78,7 @@ public class StuController {
     public String loginAdmin(Student st, HttpServletRequest req) { 
     	if(stuDao.validate(st)) {
     		req.getSession().setAttribute("uid", st.getStuNum());
-    		int id = st.getStuNum();
+    		
     		return "redirect:welcome";
     	}else {
     		return "redirect:login";
@@ -107,18 +119,22 @@ public class StuController {
 	  @RequestMapping(value="/welcome",method = RequestMethod.GET)
 	  public String Welcomepage(HttpServletRequest req) {
 
-		int id = (Integer) req.getSession().getAttribute("uid");
-  		Student stud = stuDao.queryStudentByID(id);
+			int id = (Integer) req.getSession().getAttribute("uid");
+			String uid = String.valueOf(id);
+  		 stud = stuDao.queryStudentByID(id);
   		req.getSession().setAttribute("stud", stud);
-	  		
   		sclist = stuclDao.allStuClassByID(stud.getStuNum());
   		req.getSession().setAttribute("sclist", sclist);	
-  		
  		flist = flDao.getFileByStu(stud.getStuNum());
   		req.getSession().setAttribute("flist", flist);
-  		
-
-  		System.out.println("Size of file list is "+flist.size());
+  	  	rlist = exproomDao.queryAllExpRoom();
+  	  	req.getSession().setAttribute("rlist", rlist);
+  	  	avlist = bookDao.queryAllAvailableTime();
+  	  	req.getSession().setAttribute("avlist", avlist);
+  	  	atlist = bookDao.queryApprovedTimeByStu(id);
+  	  	req.getSession().setAttribute("atlist", atlist);
+  	  	aplist =  bookDao.queryApplicationByStu(uid);
+  	  	req.getSession().setAttribute("aplist", aplist);
   		
       return "welcomeStu";  
 	  } 
@@ -169,9 +185,10 @@ public class StuController {
 	  @RequestMapping(value="/selectclass/{cid}",method = RequestMethod.GET)
 	  public ResponseEntity getStuClass(@PathVariable(value = "cid") int cid, HttpServletRequest req) {
 	
-		  int id = (Integer) req.getSession().getAttribute("uid");
-
+		  System.out.println(cid);
 		  belist = bexpDao.allBookedExpByClass(cid);
+		  System.out.println("Booked list "+belist.size());
+
 		  req.getSession().setAttribute("belist", belist);
 		  return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -183,7 +200,80 @@ public class StuController {
 //	    	return "redirect:view"; 
 //
 //	    }
+	  
+	  @RequestMapping(value="/selectAvTime/{availableid}",method = RequestMethod.GET)
+	  public ResponseEntity rejectAppliction(@PathVariable(value = "availableid") String availableid, HttpServletRequest req) { 
+		  AvailableTime avtime = bookDao.queryAvailableTimebyID(availableid);
+		  req.getSession().setAttribute("avtime", avtime);
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/applyTime",method = RequestMethod.POST)
+	  public ResponseEntity addAvTime(Application ap,HttpServletRequest req) { 
+		  bookDao.addApplication(ap);
+			aplist = bookDao.queryApplicationByStu(ap.getStunum());
+			req.getSession().setAttribute("aplist", aplist);
+			avlist = bookDao.queryAllAvailableTime();
+			req.getSession().setAttribute("avlist", avlist);
+	 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/removeApp/{appid}",method = RequestMethod.GET)
+	  public ResponseEntity removeApplication(@PathVariable(value = "appid") String appid, HttpServletRequest req) { 
+
+			 bookDao.rejectApplication(appid);
+			  aplist =  bookDao.queryApplicationByStu(stud.getStuNum());
+			  req.getSession().setAttribute("aplist", aplist);
+			  avlist =  bookDao.queryAllAvailableTime();
+			  req.getSession().setAttribute("avlist", avlist);
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/removeApproved/{id}",method = RequestMethod.GET)
+	  public ResponseEntity removeApproved(@PathVariable(value = "id") int id , HttpServletRequest req) { 
+
+			 bookDao.removeApprovedTime(id);
+			  atlist = bookDao.queryApprovedTimeByStu(stud.getStuNum());
+			  req.getSession().setAttribute("atlist", atlist);
+
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/resetFilter",method = RequestMethod.GET)
+	    public ResponseEntity resetFilter(HttpServletRequest req) {
+
+		  avlist = bookDao.queryAllAvailableTime();
+		  req.getSession().setAttribute("avlist", avlist);
+
+
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
+	  
+	  @RequestMapping(value="/filterBook",method = RequestMethod.GET)
+	    public ResponseEntity filterBook( String week, 
+	      		String room, HttpServletRequest req) {
+		  	
+		  
+		  if(room!=null &&  week!=null) {
+			  avlist = bookDao.queryAvailableTimeByWEEKandROOM(week, room);
+		  }else if(week!=null) {
+			  avlist = bookDao.queryAvailableTimeByWEEK(week);
+		  }else if(room!=null) {
+			  avlist =  bookDao.queryAvailableTimeByROOM(room);
+		  }
+		  	  
+		  req.getSession().setAttribute("avlist", avlist);
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
 		
+	  @RequestMapping(value="/addFeedback",method = RequestMethod.GET)
+	    public ResponseEntity filterBook(String comment, HttpServletRequest req) {
+		  Feedback fb = new Feedback(0,comment,"");
+		  fdDao.addAvailableTime(fb);
+		  req.getSession().setAttribute("fdlist", fdlist);
+
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
 		
 }
 

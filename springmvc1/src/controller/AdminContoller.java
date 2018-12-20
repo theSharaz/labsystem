@@ -35,6 +35,12 @@ public class AdminContoller {
 	BookedExpDao bexpDao;
 	@Autowired
 	FilesDao flDao;
+	@Autowired
+	ExpRoomDao exproomDao;
+	@Autowired
+	BookDao bookDao;
+	@Autowired
+	FeedbackDao fdDao;
 	
     static List<Professor> plist =new ArrayList<Professor>();
     static List<Student> slist =new ArrayList<Student>();
@@ -44,7 +50,12 @@ public class AdminContoller {
     static List<ProfClass> pclist =new ArrayList<ProfClass>();
     static List<BookedExp> belist =new ArrayList<BookedExp>();
     static List<Files> flist =new ArrayList<Files>();
-
+    static List<ExpRoom> rlist =new ArrayList<ExpRoom>();
+    static List<AvailableTime> avlist =new ArrayList<AvailableTime>();
+    static List<Application> aplist =new ArrayList<Application>();
+    static List<ApprovedTime> atlist =new ArrayList<ApprovedTime>();
+    static List<Feedback> fdlist =new ArrayList<Feedback>();
+    static Admin admin = new Admin();
     static int state;
 	
 
@@ -54,6 +65,50 @@ public class AdminContoller {
     public String loginPage(ModelMap model) {
         return "adminLogin";  
     } 
+	
+//	  http://localhost:8085/springmvc/admin/welcome
+	  @RequestMapping(value="/logg",method = RequestMethod.POST)
+	  public String loginAdmin(Admin ad,HttpServletRequest req) { 
+	  	if(adDao.validate(ad)) {
+	  		admin = adDao.queryAdminsByName(ad.getName());
+	  	  	req.getSession().setAttribute("admin", admin);
+
+	  		return "redirect:welcome";
+	  	}else {
+
+	  		return "redirect:login";
+	  	} 
+	  }  
+
+  @RequestMapping(value="/welcome",method = RequestMethod.GET)
+  public String Welcomepage(HttpServletRequest req) {
+  	plist = profDao.allProfessors();
+  	req.getSession().setAttribute("plist", plist);
+  	slist = stuDao.allStudents();
+  	req.getSession().setAttribute("slist", slist);
+  	clist = clDao.allClass();
+  	req.getSession().setAttribute("clist", clist);
+  	state = stateDao.getState();
+  	req.getSession().setAttribute("state", state);
+  	rlist = exproomDao.queryAllExpRoom();
+  	req.getSession().setAttribute("rlist", rlist);
+  	avlist = bookDao.queryAllAvailableTime();
+  	req.getSession().setAttribute("avlist", avlist);
+  	atlist = bookDao.queryAllApprovedTime();
+  	req.getSession().setAttribute("atlist", atlist);
+  	aplist =  bookDao.queryAllApplication();
+  	req.getSession().setAttribute("aplist", aplist);
+  	fdlist =  fdDao.queryFeedback();
+  	req.getSession().setAttribute("fdlist", fdlist);
+
+      return "welcome";  
+  } 
+  
+  @RequestMapping(value="/changePass",method = RequestMethod.POST)
+  public String changePassw(Admin ad) { 
+	  adDao.changePassword(ad);
+	return "redirect:welcome";
+} 
 	
   @RequestMapping(value="/addProf",method = RequestMethod.POST)
   public String addProf(Professor prof) { 
@@ -68,38 +123,76 @@ public class AdminContoller {
 	return "redirect:welcome";
   }
 
-	  @RequestMapping(value="/addStu",method = RequestMethod.POST)
-	  public String addStu(Student stu) { 
-		  stuDao.addStudent(stu);
-		return "redirect:welcome";
-  }  
-	
+//	  @RequestMapping(value="/addStu",method = RequestMethod.POST)
+//	  public String addStu(Student stu) { 
+//		  stuDao.addStudent(stu);
+//		return "redirect:welcome";
+//  }  
+  
+  @RequestMapping(value="/addStu",method = RequestMethod.POST)
+  public ResponseEntity addStu(Student stu,HttpServletRequest req) { 
+	  stuDao.addStudent(stu);
+  	slist = stuDao.allStudents();
+  	req.getSession().setAttribute("slist", slist);
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+}  
 	  
-//	  http://localhost:8085/springmvc/admin/welcome
-    @RequestMapping(value="/logg",method = RequestMethod.POST)
-    public String loginAdmin(Admin ad) { 
-    	if(adDao.validate(ad)) {
+	  @RequestMapping(value="/addRoom",method = RequestMethod.POST)
+	  public String addRoom(ExpRoom room) { 
+		  exproomDao.addExpRoom(room);
+		return "redirect:welcome";
+  } 
+	  
+	  @RequestMapping(value="/addAvTime",method = RequestMethod.POST)
+	  public ResponseEntity addAvTime(AvailableTime av,HttpServletRequest req) { 
+		  bookDao.addAvailableTime(av);
+			avlist = bookDao.queryAvailableTimeByROOM(av.getRoom());
+			req.getSession().setAttribute("avlist", avlist);
+	 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	
+	  @RequestMapping(value="/approveApplication/{id}",method = RequestMethod.GET)
+	  public ResponseEntity approveAppliction(@PathVariable(value = "id") String id, HttpServletRequest req) { 
+		  Application ap = bookDao.queryApplicationByID(id);
+		  ApprovedTime apt = new ApprovedTime(0,ap.getClassno(),ap.getStunum(),ap.getWeek(),ap.getDay(),ap.getStart(),ap.getFinish(),ap.getRoom(),ap.getAvailableid());
+		  int r =0 ;
+		  System.out.println("ap "+ap.getWeek());
 
-    		return "redirect:welcome";
-    	}else {
+		  System.out.println("apt "+apt.getWeek());
+		 r = bookDao.addApprovedTime(apt);
+		 
+		 
+		 if (r!=0) {
+			 bookDao.rejectApplication(id);
+		 }
+		 
+		  atlist = bookDao.queryAllApprovedTime();
+		  req.getSession().setAttribute("atlist", atlist);
+		  aplist =  bookDao.queryAllApplication();
+		  req.getSession().setAttribute("aplist", aplist);
+		
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/rejectAppliction/{id}",method = RequestMethod.GET)
+	  public ResponseEntity rejectAppliction(@PathVariable String id, HttpServletRequest req) { 
 
-    		return "redirect:login";
-    	} 
-    }  
+			 bookDao.rejectApplication(id);
+			  atlist = bookDao.queryAllApprovedTime();
+			  req.getSession().setAttribute("atlist", atlist);
+			  aplist =  bookDao.queryAllApplication();
+			  req.getSession().setAttribute("aplist", aplist);
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+	  @RequestMapping(value="/removeApproved/{id}",method = RequestMethod.GET)
+	  public ResponseEntity removeApproved(@PathVariable(value = "id") int id , HttpServletRequest req) { 
 
-    @RequestMapping(value="/welcome",method = RequestMethod.GET)
-    public String Welcomepage(HttpServletRequest req) {
-    	plist = profDao.allProfessors();
-    	req.getSession().setAttribute("plist", plist);
-    	slist = stuDao.allStudents();
-    	req.getSession().setAttribute("slist", slist);
-    	clist = clDao.allClass();
-    	req.getSession().setAttribute("clist", clist);
-    	state = stateDao.getState();
-    	req.getSession().setAttribute("state", state);
-
-        return "welcome";  
-    }  
+			 bookDao.removeApprovedTime(id);
+		 return new ResponseEntity(HttpStatus.NO_CONTENT);
+  } 
+	  
+ 
     
     @RequestMapping(value="/deleteprof/{id}",method = RequestMethod.GET)  
     public String deleteProf(@PathVariable String id) { 
@@ -107,11 +200,40 @@ public class AdminContoller {
     	return "redirect:../welcome"; 
     } 
     
+//    @RequestMapping(value="/deletestu/{id}",method = RequestMethod.GET)  
+//    public String deleteStu(@PathVariable String id) { 
+//    	stuDao.deleteStudentById(id);
+//    	return "redirect:../welcome"; 
+//    }
+    
     @RequestMapping(value="/deletestu/{id}",method = RequestMethod.GET)  
-    public String deleteStu(@PathVariable String id) { 
+    public ResponseEntity deleteStu(@PathVariable String id, HttpServletRequest req) { 
     	stuDao.deleteStudentById(id);
+    	slist = stuDao.allStudents();
+    	req.getSession().setAttribute("slist", slist);
+  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+    
+    
+    
+    @RequestMapping(value="/deleteroom/{id}",method = RequestMethod.GET)  
+    public String deleteRoom(@PathVariable String id) { 
+    	exproomDao.deleteExpRoom(id);
     	return "redirect:../welcome"; 
     }
+    
+    @RequestMapping(value="/deleteAvTime/{id}",method = RequestMethod.GET)  
+    public ResponseEntity deleteAvTime(@PathVariable String id, HttpServletRequest req) { 
+    	bookDao.deleteAvailableTime(id);
+		String roomid = (String) req.getSession().getAttribute("roomid");
+
+		avlist = bookDao.queryAvailableTimeByROOM(roomid);
+		req.getSession().setAttribute("avlist", avlist);
+  	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+    
+    
+    
     
 	  @RequestMapping(value="/lelele",method = RequestMethod.GET)
 	  public ResponseEntity lelele(HttpServletRequest req) { 
@@ -153,6 +275,53 @@ public class AdminContoller {
 			req.getSession().setAttribute("belist", belist);
 			flist = flDao.getFileByClass(classno);
 			req.getSession().setAttribute("flist", flist);
+
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
+	  
+	  @RequestMapping(value="/selectroom/{room}",method = RequestMethod.GET)
+	    public ResponseEntity roomInfo(@PathVariable(value = "room") String room, HttpServletRequest req) {
+
+
+		avlist = bookDao.queryAvailableTimeByROOM(room);
+		req.getSession().setAttribute("avlist", avlist);
+		req.getSession().setAttribute("roomid", room);
+
+
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
+	  
+	  
+	  @RequestMapping(value="/resetFilter",method = RequestMethod.GET)
+	    public ResponseEntity resetFilter(HttpServletRequest req) {
+
+		  atlist = bookDao.queryAllApprovedTime();
+		  req.getSession().setAttribute("atlist", atlist);
+		  aplist =  bookDao.queryAllApplication();
+		  req.getSession().setAttribute("aplist", aplist);
+
+	    return new ResponseEntity(HttpStatus.NO_CONTENT);
+	    }
+	  
+	  @RequestMapping(value="/filterBook",method = RequestMethod.GET)
+	    public ResponseEntity filterBook(String classno, String week, 
+	    		String room, HttpServletRequest req) {
+		  
+		  
+		  if(classno!=null &&  week!=null) {
+			  aplist = bookDao.queryApplicationByWEEKandClassno(week, classno);
+			  atlist =  bookDao.queryApprovedTimeByWEEKandClassno(week, classno);
+		  }else if(week!=null) {
+			  aplist = bookDao.queryApplicationByWeek(week);
+			  atlist =  bookDao.queryApprovedTimeByWeek(week);
+		  }else if(classno!=null) {
+			  aplist = bookDao.queryApplicationByClass(classno);
+			  atlist =  bookDao.queryApprovedTimeByClass(classno);
+		  }
+		  
+		  
+		  req.getSession().setAttribute("atlist", atlist);
+		  req.getSession().setAttribute("aplist", aplist);
 
 	    return new ResponseEntity(HttpStatus.NO_CONTENT);
 	    }

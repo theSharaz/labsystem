@@ -50,10 +50,22 @@ public class ExpRoomDao {
 	  	return erlist;
 	  }
 	
-    public ExpRoom queryExpRoomByID(int id){
+    public ExpRoom queryExpRoomByID(String id){
 		List<ExpRoom> arlist=new ArrayList<ExpRoom>();
 		ExpRoom er = new ExpRoom();
 		String sql="select * from exproom where id=?";
+		arlist = jdbcTemplate.query(sql, new ExpRoomInfo(), id);
+		
+	 	for(ExpRoom e: arlist) {
+	 		er=e;
+	 	}
+		return er;
+	    }	
+    
+    public ExpRoom queryExpRoomByRoom(String id){
+		List<ExpRoom> arlist=new ArrayList<ExpRoom>();
+		ExpRoom er = new ExpRoom();
+		String sql="select * from exproom where room=?";
 		arlist = jdbcTemplate.query(sql, new ExpRoomInfo(), id);
 		
 	 	for(ExpRoom e: arlist) {

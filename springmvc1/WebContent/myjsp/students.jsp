@@ -3,10 +3,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	  	<h2>Students</h2>
-          <div class="table-responsive">
-            <table class="table table-striped table-sm">
-              <thead>
-                <tr>
+          <div>
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+          <tr class="table-head">
                   <th>Student No.</th>
                   <th>Name</th>
                   <th>Password</th>
@@ -27,7 +27,7 @@
              			<td>${s.address}</td>
              			<td>${s.email}</td>
              			<td>${s.phone}</td>
-             			<td><a href="deletestu/${s.stuNum}">Delete</a></td>
+             			<td><a href="deletestu/${s.stuNum}" onclick="getStudents()">Delete</a></td>
            			</tr>
        			</c:forEach>
               </tbody>
@@ -53,12 +53,19 @@
 			    <input type="text" placeholder="Enter Email" name="email" required>
 			    <input type="text" placeholder="Enter Phone" name="phone" required>
 			
-			    <button type="submit" class="btn">Add</button>
+			    <button type="submit" onclick="getStudents()" class="btn">Add</button>
 			    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
 			  </form>
 		</div>
 	    <script>
 	
+	       function getStudents(){
+	        	  setTimeout(function(){
+	                	$("#cont").load('../myjsp/students.jsp');
+	            		return false;
+	            		},
+	            		500);
+	          }
 	    
 	    function openForm() {
 	        document.getElementById("myForm").style.display = "block";

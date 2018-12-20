@@ -17,10 +17,10 @@
 
 <%-- 	<jsp:include page="../../myjsp/professors.jsp"/>
  --%></head>
-<body class ="bg-secondary">
+<body class ="bg-light">
 
 	 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="welcomeStu">Lab Management System</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="welcome">Lab Management System</a>
 <!--      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
  -->      <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
@@ -51,8 +51,19 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                   View Experiments
                 </a>
-              </li>              
-              
+              </li>   
+              <li class="nav-item">
+                <a class="nav-link" href="openExp">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                  Book Experiments
+                </a>
+              </li>            
+              <li class="nav-item">
+                <a class="nav-link" href="feedback">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                  Feedback
+                </a>
+              </li>                  
             </ul> 
           </div>
         </nav>
@@ -62,7 +73,8 @@
 	  		<div id="stucont">
 
 	  		</div>
-
+			
+			
 	  	</main>
 	       	<script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
 	         <script src="../js/studentjs.js"></script>

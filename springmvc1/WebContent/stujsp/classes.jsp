@@ -5,9 +5,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	  	<h2>Classes</h2>
           <div class="table-responsive">
-            <table  class="table table-striped table-sm">
-              <thead>
-                <tr>
+	      <table class="table table-bordered table-striped table-hover">
+	        <thead>
+	          <tr class="table-head"> 
                   <th>Stu No.</a></th>
                   <th>Class No.</th>
                 </tr>
